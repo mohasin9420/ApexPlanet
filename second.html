@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Todo App</title>
+    <link rel="stylesheet" href="second.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">ApexPlanet</div>
+        <ul class="nav-links">
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#todo">Todo List</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <section id="contact" class="section">
+            <h2>Contact Us</h2>
+            <form id="contactForm" class="contact-form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <span class="error" id="nameError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <span class="error" id="emailError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" required></textarea>
+                    <span class="error" id="messageError"></span>
+                </div>
+
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </section>
+
+        <section id="todo" class="section">
+            <h2>Todo List</h2>
+            <div class="todo-container">
+                <div class="todo-input">
+                    <input type="text" id="todoInput" placeholder="Add a new task">
+                    <button id="addTodo">Add</button>
+                </div>
+                <ul id="todoList" class="todo-list"></ul>
+            </div>
+        </section>
+
+        <section id="gallery" class="section">
+            <h2>Image Gallery</h2>
+            <div class="gallery-grid" id="imageGallery"></div>
+            <div class="gallery-controls">
+                <label for="imageInput" class="visually-hidden">Choose an image to upload</label>
+                <input type="file" id="imageInput" accept="image/*" title="Choose an image to upload">
+                <button id="addImage">Add Image</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="second.js"></script>
+</body>
+</html>
