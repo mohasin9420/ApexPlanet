@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Styling and JavaScript</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🌐 Responsive Web App</h1>
+
+  <section class="section responsive">
+  <h2>1️⃣ Responsive Box</h2>
+  <div class="responsive-box">Resize the screen to see changes!</div>
+  <button id="toggleTheme">Toggle Theme</button>
+</section>
+
+    <section class="section quiz">
+      <h2>2️⃣ Interactive Quiz</h2>
+      <div class="score-area">
+        <span id="score-label">Score:</span>
+        <span id="score-value" class="score-animate">0</span>
+      </div>
+      <p id="question">What is the capital of France?</p>
+      <div class="options">
+        <button onclick="checkAnswer(this)">Paris</button>
+        <button onclick="checkAnswer(this)">London</button>
+        <button onclick="checkAnswer(this)">Rome</button>
+        <button onclick="checkAnswer(this)">Berlin</button>
+      </div>
+      <p id="quiz-result"></p>
+    </section>
+
+   
+    <section class="section api">
+      <h2>3️⃣ Joke Generator (API)</h2>
+      <p id="joke">Click below to get a random joke!</p>
+      <button onclick="getJoke()">Tell me a Joke</button>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

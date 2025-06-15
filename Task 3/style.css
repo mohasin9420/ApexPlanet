@@ -1,0 +1,295 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #f7971e, #ffd200, #21d4fd, #b721ff, #ff5e62, #ff9966);
+  background-size: 400% 400%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  animation: gradientBG 10s ease-in-out infinite;
+}
+
+.container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  animation: textPop 2s cubic-bezier(0.68,-0.55,0.27,1.55) infinite alternate;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.responsive-box {
+  margin: 1rem auto;
+  padding: 2rem;
+  width: 80%;
+  max-width: 500px;
+  background-color: #e0f7fa;
+  border: 4px solid #00796b;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+  transition: all 0.4s ease, box-shadow 0.4s ease;
+  animation: borderPulse 2s infinite alternate, floatBox 3s ease-in-out infinite;
+  box-shadow: 0 0 40px 0 rgba(33,212,253,0.2), 0 0 80px 0 rgba(183,33,255,0.1);
+}
+
+.responsive-box:hover {
+  background-color: #b2ebf2;
+  color: #004d40;
+}
+
+.quiz {
+  background: linear-gradient(120deg, #fffbe7 60%, #e0f7fa 100%);
+  border-radius: 18px;
+  box-shadow: 0 6px 32px 0 #21d4fd22;
+  padding: 2.5em 1.5em 2em 1.5em;
+  margin: 0 auto 2em auto;
+  max-width: 520px;
+  border: 3px solid #ffd200;
+  position: relative;
+}
+
+.quiz h2 {
+  font-size: 2.1rem;
+  margin-bottom: 1.2em;
+  color: #4a148c;
+  text-shadow: 0 2px 12px #b721ff33;
+}
+
+.score-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  gap: 0.5em;
+  background: linear-gradient(90deg, #ff9966, #ff5e62, #21d4fd, #b721ff, #ffd200);
+  background-size: 200% 200%;
+  border-radius: 10px;
+  padding: 0.6em 1.5em;
+  color: #fff;
+  box-shadow: 0 0 18px 0 #b721ff44;
+  animation: scoreBG 3s linear infinite alternate;
+}
+
+@keyframes scoreBG {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+#score-label {
+  font-size: 1.2rem;
+  text-shadow: 0 2px 8px #21d4fd99;
+  letter-spacing: 0.08em;
+}
+
+#score-value {
+  font-size: 2.6rem;
+  font-weight: 900;
+  -webkit-background-clip: text;
+  background-clip: text;
+  background: linear-gradient(90deg, #ffd200, #21d4fd, #b721ff, #ff5e62);
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px #ffd20088);
+  transition: filter 0.3s, transform 0.3s;
+}
+
+.score-animate-pop {
+  animation: popScore 0.5s cubic-bezier(0.68,-0.55,0.27,1.55);
+}
+
+@keyframes popScore {
+  0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 8px #ffd20088); }
+  60% { transform: scale(1.3) rotate(-8deg); filter: drop-shadow(0 0 24px #21d4fdcc); }
+  100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 8px #ffd20088); }
+}
+
+#question {
+  font-size: 1.4rem;
+  margin-bottom: 1.2em;
+  color: #00796b;
+  font-weight: 600;
+  text-align: center;
+}
+
+.quiz .options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7em;
+  margin-bottom: 1em;
+}
+
+.quiz .options button {
+  font-size: 1.1rem;
+  min-width: 90px;
+  padding: 0.7em 1.2em;
+  border: none;
+  background-color: #0077ff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  animation: buttonPulse 1.5s infinite alternate;
+}
+
+.quiz .options button:hover {
+  background-color: #005fcc;
+}
+
+#quiz-result {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.api button {
+  padding: 10px 25px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.api button:hover {
+  background-color: #388e3c;
+}
+
+.retest-btn {
+  margin-top: 1.2em;
+  padding: 0.7em 2em;
+  font-size: 1.2rem;
+  background: linear-gradient(90deg, #21d4fd, #b721ff, #ffd200);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 12px #b721ff44;
+  transition: background 0.3s, transform 0.2s;
+  animation: buttonPulse 1.5s infinite alternate;
+}
+
+.retest-btn:hover {
+  background: linear-gradient(90deg, #ffd200, #21d4fd, #b721ff);
+  transform: scale(1.08);
+}
+
+@media (max-width: 768px) {
+  .responsive-box {
+    font-size: 1.2rem;
+    padding: 1.5rem;
+    border-color: #0288d1;
+  }
+}
+
+@media (max-width: 600px) {
+  .responsive-box {
+    background-color: #ffe0b2;
+    font-size: 14px;
+  }
+  .container {
+    padding: 20px;
+  }
+  h1 {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-box {
+    font-size: 1rem;
+    padding: 1rem;
+    border-color: #d32f2f;
+  }
+}
+
+@keyframes borderPulse {
+  from { border-width: 4px; }
+  to { border-width: 8px; }
+}
+
+@keyframes floatBox {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-18px) scale(1.04) rotate(-2deg); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes textPop {
+  0% { letter-spacing: 0.1em; color: #4a148c; }
+  100% { letter-spacing: 0.25em; color: #21d4fd; }
+}
+
+@keyframes buttonPulse {
+  0% { box-shadow: 0 0 0 0 #0077ff44; }
+  100% { box-shadow: 0 0 12px 6px #21d4fd44; }
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 50% 100%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 0%; }
+  100% { background-position: 0% 50%; }
+}
+
+body.light-theme .responsive-box {
+  background-color: #fffde7;
+  color: #5d4037;
+  border-color: #fbc02d;
+}
+
+body.dark-theme .responsive-box {
+  background-color: #296c8d;
+  color: #fff;
+  border-color: #4dd0e1;
+}
+
+body.sky-theme .responsive-box {
+  background-color: #e3f2fd;
+  color: #01579b;
+  border-color: #0288d1;
+}
+
+body.purple-theme .responsive-box {
+  background-color: #ede7f6;
+  color: #4a148c;
+  border-color: #7e57c2;
+}
+
+#toggleTheme {
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  font-size: 1rem;
+  background-color: #00796b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#toggleTheme:hover {
+  background-color: #004d40;
+}
+
+.responsive {
+  margin: 2rem;
+  text-align: center;
+}
