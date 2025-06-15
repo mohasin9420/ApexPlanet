@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Product Catalog</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6c5ce7, #a363d9);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        h1 {
+            text-align: center;
+            color: #6c5ce7;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        select, input {
+            padding: 0.8rem 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            border-color: #6c5ce7;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            animation: scaleIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(163, 99, 217, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #2d3436;
+            transition: color 0.3s ease;
+        }
+
+        .product-category {
+            color: #6c5ce7;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #00b894;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        .product-rating {
+            color: #fdcb6e;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            font-size: 1.2rem;
+            color: #6c5ce7;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: white;
+            font-size: 1.2rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Product Catalog</h1>
+            <div class="filters">
+                <select id="categoryFilter" aria-label="Filter by category">
+                    <option value="">All Categories</option>
+                </select>
+                <select id="priceFilter" aria-label="Filter by price range">
+                    <option value="">All Prices</option>
+                    <option value="0-25">Under $25</option>
+                    <option value="25-50">$25 - $50</option>
+                    <option value="50-100">$50 - $100</option>
+                    <option value="100+">$100+</option>
+                </select>
+                <select id="sortBy" aria-label="Sort products">
+                    <option value="name">Sort by Name</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Top Rated</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="Search products..." aria-label="Search products">
+            </div>
+        </header>
+        <main class="product-grid" id="productGrid"></main>
+    </div>
+
+    <script>
+        class ProductCatalog {
+            constructor() {
+                this.products = [
+                    { id: 1, name: "Laptop Pro", category: "Electronics", price: 999.99, rating: 4.8, icon: "💻" },
+                    { id: 2, name: "Wireless Mouse", category: "Electronics", price: 29.99, rating: 4.5, icon: "🖱️" },
+                    { id: 3, name: "Coffee Maker", category: "Appliances", price: 79.99, rating: 4.7, icon: "☕" },
+                    { id: 4, name: "Desk Lamp", category: "Home", price: 24.99, rating: 4.3, icon: "💡" },
+                    { id: 5, name: "Bluetooth Speaker", category: "Electronics", price: 49.99, rating: 4.6, icon: "🔊" },
+                    { id: 6, name: "Plant Pot", category: "Home", price: 19.99, rating: 4.2, icon: "🌿" },
+                    { id: 7, name: "Smart Watch", category: "Electronics", price: 199.99, rating: 4.9, icon: "⌚" },
+                    { id: 8, name: "Water Bottle", category: "Lifestyle", price: 14.99, rating: 4.4, icon: "🍶" },
+                ];
+
+                this.initializeFilters();
+                this.setupEventListeners();
+                this.renderProducts();
+            }
+
+            initializeFilters() {
+                const categories = [...new Set(this.products.map(p => p.category))];
+                const categoryFilter = document.getElementById('categoryFilter');
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categoryFilter.appendChild(option);
+                });
+            }
+
+            setupEventListeners() {
+                ['categoryFilter', 'priceFilter', 'sortBy'].forEach(id => {
+                    document.getElementById(id).addEventListener('change', () => this.renderProducts());
+                });
+                document.getElementById('searchInput').addEventListener('input', () => this.renderProducts());
+            }
+
+            filterProducts() {
+                const category = document.getElementById('categoryFilter').value;
+                const priceRange = document.getElementById('priceFilter').value;
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+                return this.products.filter(product => {
+                    const matchesCategory = !category || product.category === category;
+                    const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+                    let matchesPrice = true;
+
+                    if (priceRange) {
+                        const [min, max] = priceRange.split('-').map(v => v === '+' ? Infinity : Number(v));
+                        matchesPrice = product.price >= min && (max === Infinity || product.price <= max);
+                    }
+
+                    return matchesCategory && matchesSearch && matchesPrice;
+                });
+            }
+
+            sortProducts(products) {
+                const sortBy = document.getElementById('sortBy').value;
+                return [...products].sort((a, b) => {
+                    switch(sortBy) {
+                        case 'price-low':
+                            return a.price - b.price;
+                        case 'price-high':
+                            return b.price - a.price;
+                        case 'rating':
+                            return b.rating - a.rating;
+                        default:
+                            return a.name.localeCompare(b.name);
+                    }
+                });
+            }
+
+            renderProducts() {
+                const filteredProducts = this.filterProducts();
+                const sortedProducts = this.sortProducts(filteredProducts);
+                const grid = document.getElementById('productGrid');
+                
+                grid.innerHTML = '';
+                
+                if (sortedProducts.length === 0) {
+                    grid.innerHTML = '<div class="no-results">No products found</div>';
+                    return;
+                }
+
+                sortedProducts.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+                        <div class="product-icon">${product.icon}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-category">${product.category}</div>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <div class="product-rating">
+                            ${'★'.repeat(Math.floor(product.rating))}
+                            ${'☆'.repeat(5 - Math.floor(product.rating))}
+                            (${product.rating})
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // Initialize the catalog
+        new ProductCatalog();
+    </script>
+</body>
+</html>
