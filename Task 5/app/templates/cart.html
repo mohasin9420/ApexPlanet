@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+
+{% block title %}Cart & Checkout{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Cart Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold animate__animated animate__fadeInDown">
+            <i class="bi bi-cart3 me-3"></i>Shopping Cart
+        </h1>
+        <p class="lead text-muted animate__animated animate__fadeInUp animate__delay-1s">
+            Review your selected courses before checkout
+        </p>
+    </div>
+
+    <div class="row">
+        <!-- Shopping Cart -->
+        <div class="col-lg-8">
+            <div class="cart-section animate__animated animate__fadeInLeft">
+                <div class="cart-header d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0">
+                        <i class="bi bi-bag me-2"></i>Your Courses
+                    </h3>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearCart()">
+                        <i class="bi bi-trash me-1"></i>Clear All
+                    </button>
+                </div>
+                <div id="cart-items" class="cart-items-container">
+                    <!-- Cart items will be dynamically loaded here -->
+                    <div class="loading-state text-center py-5">
+                        <div class="loading-spinner mx-auto mb-3"></div>
+                        <p class="text-muted">Loading your cart...</p>
+                    </div>
+                </div>
+
+                <!-- Debug info -->
+                <div class="alert alert-info mt-3" id="debug-info">
+                    <strong>Debug Info:</strong>
+                    <div id="debug-content"></div>
+                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="addTestItem()">
+                        Add Test Item to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Summary -->
+        <div class="col-lg-4">
+            <div class="payment-summary animate__animated animate__fadeInRight">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <h3 class="mb-0">
+                            <i class="bi bi-receipt me-2"></i>Order Summary
+                        </h3>
+                    </div>
+                    <div class="summary-body">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="subtotal" class="fw-bold">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Discount:</span>
+                            <span id="discount" class="text-success fw-bold">-$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (10%):</span>
+                            <span id="tax" class="fw-bold">$0.00</span>
+                        </div>
+                        <hr class="my-3">
+                        <div class="summary-row total-row">
+                            <strong>Total:</strong>
+                            <strong id="total" class="h4 text-primary">$0.00</strong>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method Selection -->
+                    <div class="mb-4">
+                        <h5>Payment Method</h5>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="credit-card" checked>
+                            <label class="form-check-label" for="credit-card">
+                                Credit Card
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="paypal">
+                            <label class="form-check-label" for="paypal">
+                                PayPal
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Credit Card Information -->
+                    <div id="credit-card-form">
+                        <div class="mb-3">
+                            <label for="card-number" class="form-label">Card Number</label>
+                            <input type="text" class="form-control" id="card-number" placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="expiry" class="form-label">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiry" placeholder="MM/YY">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100 checkout-btn" onclick="processPayment()">
+                        <i class="bi bi-credit-card me-2"></i>Proceed to Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Load cart items when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Cart page loaded');
+        console.log('localStorage cart:', localStorage.getItem('cart'));
+
+        // Show debug info
+        updateDebugInfo();
+
+        function updateDebugInfo() {
+            const debugContent = document.getElementById('debug-content');
+            if (debugContent) {
+                debugContent.innerHTML = `
+                    <p><strong>localStorage cart:</strong> ${localStorage.getItem('cart') || 'null'}</p>
+                    <p><strong>Parsed cart:</strong> <pre>${JSON.stringify(JSON.parse(localStorage.getItem('cart') || '[]'), null, 2)}</pre></p>
+                `;
+            }
+        }
+
+        // Remove loading state after a short delay
+        setTimeout(() => {
+            loadCartItems();
+        }, 500);
+    });
+
+    function loadCartItems() {
+        console.log('Loading cart items...');
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartContainer = document.getElementById('cart-items');
+        let subtotal = 0;
+
+        console.log('Cart items found:', cartItems);
+
+        // Hide loading state
+        const loadingState = document.querySelector('.loading-state');
+        if (loadingState) {
+            loadingState.style.display = 'none';
+        }
+
+        if (cartItems.length === 0) {
+            cartContainer.innerHTML = `
+                <div class="empty-cart text-center py-5">
+                    <i class="bi bi-cart-x display-1 text-muted mb-3"></i>
+                    <h3 class="text-muted mb-3">Your cart is empty</h3>
+                    <p class="text-muted mb-4">Looks like you haven't added any courses yet.</p>
+                    <a href="/products" class="btn btn-primary btn-lg">
+                        <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+            `;
+            updateTotals(0);
+            return;
+        }
+
+        const itemsHtml = cartItems.map((item, index) => {
+            subtotal += item.price * item.quantity;
+            const imageUrl = item.image_url ? `/static/${item.image_url}` : 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23667eea"/><text x="50" y="50" text-anchor="middle" dy=".3em" fill="white" font-size="20">📚</text></svg>';
+
+            return `
+                <div class="cart-item">
+                    <div class="item-content">
+                        <div class="item-image">
+                            <img src="${imageUrl}" class="img-fluid" alt="${item.name || 'Course'}"
+                                 onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 100 100\\"><rect width=\\"100\\" height=\\"100\\" fill=\\"%23667eea\\"/><text x=\\"50\\" y=\\"50\\" text-anchor=\\"middle\\" dy=\\".3em\\" fill=\\"white\\" font-size=\\"20\\">📚</text></svg>';">
+                        </div>
+                        <div class="item-details">
+                            <h5 class="item-title">${item.name || 'Course'}</h5>
+                            <p class="item-meta">
+                                <i class="bi bi-clock me-1"></i>${item.duration || 'N/A'}
+                                <span class="ms-3">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>${item.rating || '4.5'}/5.0
+                                </span>
+                            </p>
+                            <p class="item-description">${item.description ? item.description.substring(0, 80) + '...' : 'Programming course'}</p>
+                        </div>
+                        <div class="item-quantity">
+                            <label class="form-label">Quantity</label>
+                            <div class="quantity-controls">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateQuantity(${item.id}, ${Math.max(1, item.quantity - 1)})">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <input type="number" class="form-control quantity-input" value="${item.quantity || 1}"
+                                       min="1" max="10" onchange="updateQuantity(${item.id}, this.value)">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="item-price">
+                            <div class="price-display">
+                                <span class="current-price">$${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+                                ${item.quantity > 1 ? `<small class="text-muted d-block">$${(item.price || 0).toFixed(2)} each</small>` : ''}
+                            </div>
+                            <button type="button" class="btn btn-outline-danger btn-sm remove-btn" onclick="removeItem(${item.id})">
+                                <i class="bi bi-trash me-1"></i>Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        cartContainer.innerHTML = itemsHtml;
+        updateTotals(subtotal);
+        updateDebugInfo();
+    }
+
+    function updateTotals(subtotal) {
+        const discount = subtotal > 100 ? subtotal * 0.1 : 0; // 10% discount for orders over $100
+        const discountedSubtotal = subtotal - discount;
+        const tax = discountedSubtotal * 0.1;
+        const total = discountedSubtotal + tax;
+
+        document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+        document.getElementById('discount').textContent = `-$${discount.toFixed(2)}`;
+        document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+        document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+
+        // Show discount message if applicable
+        if (discount > 0) {
+            document.getElementById('discount').parentElement.style.display = 'flex';
+        } else {
+            document.getElementById('discount').parentElement.style.display = 'none';
+        }
+    }
+
+    function updateQuantity(productId, quantity) {
+        console.log('Updating quantity for product:', productId, 'to:', quantity);
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        const itemIndex = cartItems.findIndex(item => item.id == productId);
+
+        if (itemIndex !== -1) {
+            const newQuantity = parseInt(quantity);
+            if (newQuantity <= 0) {
+                removeItem(productId);
+                return;
+            }
+            cartItems[itemIndex].quantity = newQuantity;
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            loadCartItems();
+
+            // Update cart count in navigation
+            const cartBadge = document.querySelector('.cart-badge');
+            if (cartBadge) {
+                const totalCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+                cartBadge.setAttribute('data-count', totalCount);
+            }
+        }
+    }
+
+    function removeItem(productId) {
+        console.log('Removing item:', productId);
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        const updatedCart = cartItems.filter(item => item.id != productId);
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        loadCartItems();
+
+        // Update cart count in navigation
+        const cartBadge = document.querySelector('.cart-badge');
+        if (cartBadge) {
+            const totalCount = updatedCart.reduce((sum, item) => sum + item.quantity, 0);
+            cartBadge.setAttribute('data-count', totalCount);
+        }
+    }
+
+    // Make functions globally available
+    window.updateQuantity = updateQuantity;
+    window.removeItem = removeItem;
+
+    function clearCart() {
+        console.log('Clear cart button clicked');
+        if (confirm('Are you sure you want to clear your cart?')) {
+            console.log('User confirmed cart clear');
+            localStorage.removeItem('cart');
+            loadCartItems();
+            // Update cart count in navigation
+            const cartBadge = document.querySelector('.cart-badge');
+            if (cartBadge) {
+                cartBadge.setAttribute('data-count', '0');
+            }
+            console.log('Cart cleared successfully');
+        }
+    }
+
+    // Make clearCart function globally available
+    window.clearCart = clearCart;
+
+    function processPayment() {
+        console.log('Processing payment...');
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cartItems.length === 0) {
+            alert('Your cart is empty!');
+            return;
+        }
+
+        // Simulate payment processing
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+
+        btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Processing...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            alert('Payment successful! Thank you for your purchase.');
+            localStorage.removeItem('cart');
+            // Update cart count in navigation
+            const cartBadge = document.querySelector('.cart-badge');
+            if (cartBadge) {
+                cartBadge.setAttribute('data-count', '0');
+            }
+            window.location.href = '/';
+        }, 2000);
+    }
+
+    // Make processPayment function globally available
+    window.processPayment = processPayment;
+
+    // Test function to add a sample item
+    function addTestItem() {
+        const testItem = {
+            id: 999,
+            name: 'Test Course',
+            description: 'This is a test course for debugging',
+            price: 29.99,
+            image_url: 'img/courses/test-course.jpg',
+            duration: '10 Hours',
+            rating: 4.5,
+            quantity: 1
+        };
+
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const existingItem = cart.find(item => item.id === testItem.id);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push(testItem);
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        console.log('Test item added to cart');
+        updateDebugInfo();
+        loadCartItems();
+
+        // Update cart count in navigation
+        const cartBadge = document.querySelector('.cart-badge');
+        if (cartBadge) {
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartBadge.setAttribute('data-count', totalCount);
+        }
+    }
+
+    // Make addTestItem function globally available
+    window.addTestItem = addTestItem;
+</script>
+{% endblock %}

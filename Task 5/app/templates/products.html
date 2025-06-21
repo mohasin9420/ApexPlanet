@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/course-images.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5 animate__animated animate__fadeInDown">
+        <i class="bi bi-laptop me-3"></i>Programming Courses
+    </h1>
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 animate__animated animate__fadeInUp">
+                <div class="course-img-wrapper">
+                    {% if 'placeholder' in product.image_url %}
+                    <div class="course-placeholder" data-course="{{ product.name }}">
+                        <i class="bi bi-code-square"></i>
+                    </div>
+                    {% else %}
+                    <img src="{{ url_for('static', filename=product.image_url) }}" 
+                         class="card-img-top course-img-fallback" 
+                         alt="{{ product.name }}" 
+                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'course-placeholder\' data-course=\'{{ product.name }}\'><i class=\'bi bi-code-square\'></i></div>';"
+                         loading="lazy">
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description }}</p>
+                    <ul class="list-unstyled mb-3">
+                        <li><i class="bi bi-clock"></i> {{ product.duration }}</li>
+                        <li><i class="bi bi-star-fill text-warning"></i> {{ product.rating }}/5.0 Rating</li>
+                    </ul>
+                    <p class="h4 mb-3">${{ "%.2f"|format(product.price) }}</p>
+                    <button type="button" class="btn btn-primary add-to-cart" data-product-id="{{ product.id }}">
+                        <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add staggered animation delays
+    document.querySelectorAll('.animate__fadeInUp').forEach(function(el, index) {
+        el.style.animationDelay = (index * 0.1) + 's';
+    });
+});
+</script>
+{% endblock %}
